@@ -24,6 +24,7 @@ pub mod allowance_system {
 
         vault.bump = ctx.bumps.vault;
         vault.owner = ctx.accounts.owner.key();
+        vault.nonce = 0;
 
         emit!(InitializeEvent {
             owner: vault.owner.key(),
@@ -66,6 +67,7 @@ pub mod allowance_system {
         let spender = &ctx.accounts.spender;
         let vault_ata = &ctx.accounts.vault_ata;
         let mint_account = &ctx.accounts.mint_account;
+        let vault = &ctx.accounts.vault;
 
         require!(amount > 0, ErrorCode::InvaildAmount);
         require!(vault_ata.amount >= amount, ErrorCode::InsufficentBalance);
@@ -74,10 +76,10 @@ pub mod allowance_system {
         allowance_account.owner = owner.key();
         allowance_account.spender = spender.key();
         allowance_account.mint = mint_account.key();
-        allowance_account.vault = ctx.accounts.vault.key();
-
+        allowance_account.vault = vault.key();
+        allowance_account.expires_at_slot = Clock::get()?.slot + ALLOWANCE_VALIDITY_SLOTS;
+        allowance_account.nonce = vault.nonce;
         allowance_account.remaining_amount = amount;
-
         allowance_account.bump = ctx.bumps.allowance_account;
 
         emit!(ApproveEvent {
@@ -103,6 +105,8 @@ pub mod allowance_system {
 
         require!(allowance_account.remaining_amount >= amount, ErrorCode::InsufficentBalance);
         require!(&allowance_account.spender == sender, ErrorCode::Unauthorized);
+        require!(allowance_account.expires_at_slot > Clock::get()?.slot, ErrorCode::AllowanceExpired);
+        require!(allowance_account.nonce == vault.nonce, ErrorCode::AllowanceInvalidated);
         
         require_keys_eq!(allowance_account.mint, vault_ata.mint, ErrorCode::InvaildMint);
         require_keys_eq!(allowance_account.mint, reciver_ata.mint, ErrorCode::InvaildMint);
@@ -176,6 +180,14 @@ pub mod allowance_system {
             revoke_amount: amount,
         });
 
+        Ok(())
+    }
+
+    pub fn revoke_all_allowance(ctx: Context<Invalidate>) -> Result<()> {
+        let vault = &mut ctx.accounts.vault;
+
+        vault.nonce += 1;
+        
         Ok(())
     }
 }

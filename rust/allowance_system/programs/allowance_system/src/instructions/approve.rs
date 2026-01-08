@@ -21,7 +21,6 @@ pub struct Approve <'info>{
 
     pub spender: SystemAccount<'info>,
 
-    // for verify the caller should be owner only
     #[account(
         seeds=[b"vault", vault.owner.as_ref()],
         bump= vault.bump,

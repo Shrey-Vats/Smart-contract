@@ -15,5 +15,9 @@ pub enum ErrorCode {
     #[msg("Entered amount is invaild")]
     InvaildAmount,
     #[msg("Mint are different")]
-    InvaildMint
+    InvaildMint,
+    #[msg("Allowance expired")]
+    AllowanceExpired,
+    #[msg("Allowance invalid")]
+    AllowanceInvalidated
 }

@@ -3,7 +3,8 @@ use anchor_lang::prelude::*;
 #[account]
 pub struct Vault {
     pub owner: Pubkey,
-    pub bump: u8
+    pub nonce: u64,
+    pub bump: u8,
 }
 
 #[account]
@@ -13,11 +14,7 @@ pub struct Allowance {
     pub mint: Pubkey,
     pub vault: Pubkey,
     pub remaining_amount: u64,
+    pub expires_at_slot: u64,
+    pub nonce: u64,
     pub bump: u8
-}
-
-impl Vault {
-    pub fn space() -> u64 {
-        32 + 1
-    }   
 }
