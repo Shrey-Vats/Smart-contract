@@ -1,13 +1,13 @@
 use anchor_lang::prelude::*;
 
-use crate::Vault;
+use crate::{Vault};
 
 #[derive(Accounts)]
 pub struct Initialize <'info>{
 
     #[account(
         init,
-        space=8 + 32 + 1,
+        space=8 + 32 + 8 + 1,
         payer=owner,
         seeds=[b"vault", owner.key().as_ref()],
         bump

@@ -4,16 +4,14 @@ use anchor_spl::token::{Mint, TokenAccount};
 use crate::{Allowance, Vault};
 
 #[derive(Accounts)]
-pub struct Approve <'info>{
-
+pub struct Approve<'info> {
     #[account(
         init,
         payer=owner,
-        space= 8 + 32 + 32 + 32 + 8 + 1,
+        space= 8 + 32 + 32 + 32 + 32 + 8 + 8 + 8 + 1,
         seeds=[b"allowance", vault.key().as_ref(), spender.key().as_ref(), mint_account.key().as_ref()],
         bump
     )]
-
     pub allowance_account: Account<'info, Allowance>,
 
     #[account(mut)]
@@ -27,11 +25,8 @@ pub struct Approve <'info>{
         has_one=owner
     )]
     pub vault: Account<'info, Vault>,
-
     pub vault_ata: Account<'info, TokenAccount>,
-
     pub mint_account: Account<'info, Mint>,
-
     pub system_program: Program<'info, System>,
 }
 
@@ -41,5 +36,5 @@ pub struct ApproveEvent {
     pub spender: Pubkey,
     pub allowance_account: Pubkey,
     pub mint_account: Pubkey,
-    pub approve_amount: u64
+    pub approve_amount: u64,
 }
