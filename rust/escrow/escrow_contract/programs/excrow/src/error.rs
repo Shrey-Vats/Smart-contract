@@ -23,5 +23,5 @@ pub enum ErrorCode {
     #[msg("Same user don't allowed")]
     InvalidParties,
     #[msg("Mis match signer")]
-    MisMatchSigner
+    MisMatchSigner,
 }
